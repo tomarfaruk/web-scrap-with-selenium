@@ -1,0 +1,73 @@
+from selenium import webdriver
+import time
+from selenium.webdriver.chrome.options import Options
+
+option = Options()
+
+option.add_experimental_option("prefs", {
+    "profile.default_content_setting_values.notifications": 1
+})
+driver = webdriver.Chrome(chrome_options=option,
+                          executable_path=r"chromedriver.exe")
+
+link = r"https://www.facebook.com/"
+try:
+    driver.get(link)
+    name = mail = phone = website = ''
+    try:
+        # set user name
+        driver.find_element_by_css_selector(
+            "#email").send_keys("fb user name")
+        # user pass
+        driver.find_element_by_css_selector("#pass").send_keys("user pass")
+        # click login btn
+        driver.find_element_by_css_selector(
+            "._42ft._4jy0._6lth._4jy6._4jy1.selected._51sy").click()
+        # click post field
+        element = driver.find_element_by_xpath(
+            "//*[contains(text(), \"What's on your mind, ومار?\")]")
+
+        driver.execute_script("arguments[0].click();", element)
+        time.sleep(2)
+        elements = driver.find_element_by_xpath(
+            "//*[contains(text(), \"What's on your mind, ومار?\")]")
+
+        time.sleep(2)
+        # write your post
+        driver.find_element_by_css_selector(
+            "div._1mf._1mj>span>br").send_keys("hello im going to post a auto post")
+
+        elem = driver.find_elements_by_xpath(
+            "//*[contains(text(), 'Post')]")
+        # print(elem.text)
+
+        print(len(elem))
+        for i in elem:
+            try:
+                print(i.text)
+                if i.text == 'Post':
+                    i.click()
+                    time.sleep(2)
+                    break
+            except:
+                print('not get text')
+
+        log = driver.find_elements_by_css_selector(
+            '.du4w35lb.l9j0dhe7.byvelhso.rl25f0pe.j83agx80.bp9cbjyn .j83agx80.l9j0dhe7>div')
+        print(len(log))
+        for i in log:
+            if i.get_attribute('aria-label') == 'Account':
+                i.click()
+                time.sleep(2)
+                element = driver.find_element_by_xpath(
+                    "//*[contains(text(), 'Log Out')]")
+                driver.execute_script("arguments[0].click();", element)
+                break
+
+        time.sleep(200)
+    except Exception as e:
+        print("mail phone name error"+str(e))
+except Exception as e:
+    print("main url loading error"+str(e))
+
+driver.close()
